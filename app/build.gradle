@@ -1,0 +1,95 @@
+
+if (isDebug.toBoolean()) {
+    apply plugin: 'com.android.application'
+    if (isDebug.toBoolean()) {
+//        def keystorePropertiesFile = rootProject.file("key/keystore.properties")
+//        def keystoreProperties = null
+//        if (keystorePropertiesFile != null && keystorePropertiesFile.exists()) {
+//            keystoreProperties = new Properties()
+//            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+//            isKeyPropertiesExist = true
+//        }
+    }
+} else {
+    apply plugin: 'com.android.library'
+}
+android {
+//    signingConfigs {
+//        config {
+//            keyAlias '%TGBhu8'
+//            keyPassword '%TGBhu8'
+//            storeFile file('D:/FinanceKey/dycefincacel.keystore')
+//            storePassword '%TGBhu8'
+//        }
+//    }
+    compileSdkVersion 26
+    buildToolsVersion "26.0.3"
+    defaultConfig {
+        if (isDebug.toBoolean()) {
+        applicationId "com.chartdemo.jackiecustomview"
+           }
+        minSdkVersion 17
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            signingConfig signingConfigs.config
+        }
+        debug {
+//            signingConfig signingConfigs.config
+        }
+    }
+    sourceSets {
+        main {
+            if (isDebug.toBoolean()) {
+                manifest.srcFile 'src/main/debug/AndroidManifest.xml'
+            } else {
+                manifest.srcFile 'src/main/release/AndroidManifest.xml'
+            }
+            if (!isDebug.toBoolean()) {
+                java {
+                    exclude 'test/**'
+                }
+                resources {
+                    exclude 'layout/**'
+                }
+
+            }
+
+        }
+
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:26.+'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+}
+task makeJar(type: Copy) {
+    def originalJar = 'build/libs/'+'smartsdk_' + android.defaultConfig.versionName + '.jar'
+    delete originalJar
+    from('build/intermediates/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename ('classes.jar', 'smartsdk_' + android.defaultConfig.versionName + '.jar')
+}
+makeJar.dependsOn(build)
+task makeAar(type: Copy) {
+    def originalAar = 'build/outputs/aar/'+'smartsdk_' + android.defaultConfig.versionName + '.aar'
+    delete originalAar
+    from('build/outputs/aar/')
+    into('build/aar/')
+    include('smartepg-release.aar')
+    rename ('smartepg-release.aar', 'smartsdk_' + android.defaultConfig.versionName + '.aar')
+}
+makeAar.dependsOn(build)
