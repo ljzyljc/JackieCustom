@@ -1,4 +1,4 @@
-package com.chartdemo.buildtestdemo.sqlite;
+package com.chartdemo.jackiecustomview;
 
 import android.content.ContentValues;
 import android.content.Context;
