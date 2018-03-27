@@ -1,4 +1,4 @@
-package com.chartdemo.jackiecustomview;
+package com.chartdemo.buildtestdemo.sqlite;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,10 +15,10 @@ import android.util.Log;
 public class CustomSqliteOpenHelper extends SQLiteOpenHelper {
     private static final String TAG = "CustomSqliteOpenHelper";
     private static final String DATEBASE_NAME = "book_store.db";  //数据库名字
-    private static final int DATEBASE_VERSION = 1;                //数据库版本号
+    private static final int DATEBASE_VERSION = 4;                //数据库版本号
     //创建数据库表
     private static final String CREATE_TABLE = "create table bookStore (id integer primary key autoincrement,book_name text,author text,price real)";
-    
+
     public CustomSqliteOpenHelper(Context context){
         this(context,DATEBASE_NAME,null,DATEBASE_VERSION);
         Log.i(TAG, "CustomSqliteOpenHelper: -----");
@@ -37,7 +37,8 @@ public class CustomSqliteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+        Log.i(TAG, "onUpgrade: ------------执行了更新---------");
+        sqLiteDatabase.execSQL("ALTER TABLE bookStore ADD className varchar(20)");
     }
     ContentValues values;
     public void insertDatebase(SQLiteDatabase sqLiteDatabase){
@@ -58,7 +59,7 @@ public class CustomSqliteOpenHelper extends SQLiteOpenHelper {
         //使用SQLiteStatement
         SQLiteStatement statement = sqLiteDatabase.compileStatement(sql);
         sqLiteDatabase.beginTransaction();
-        for(int i=0;i<5;i++) {
+        for(int i=0;i<10;i++) {
             statement.executeInsert();
         }
         sqLiteDatabase.setTransactionSuccessful();
