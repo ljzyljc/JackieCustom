@@ -58,8 +58,11 @@ public class MainActivity extends AppCompatActivity {
                         bookPageView.setTouchPoint(event.getX(),event.getY(),style);
                         break;
                     case MotionEvent.ACTION_UP:
-                        bookPageView.setDefaultPath();
+                        bookPageView.startCancelAnim();
                         break;
+//                    case MotionEvent.ACTION_CANCEL:
+//                        bookPageView.startCancelAnim();
+//                        break;
                 }
                 return false;
 

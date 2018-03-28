@@ -11,6 +11,8 @@ import android.graphics.PorterDuffXfermode;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
+import android.widget.Scroller;
 
 import com.chartdemo.jackiecustomview.bean.MyPoint;
 
@@ -41,23 +43,25 @@ public class BookPageView extends View{
     public static final String STYLE_MIDDLE = "STYLE_MIDDLE";//点击中间区域
     public static final String STYLE_TOP_RIGHT = "STYLE_TOP_RIGHT";//f点在右上角
     public static final String STYLE_LOWER_RIGHT = "STYLE_LOWER_RIGHT";//f点在右下角
+    private Scroller scroller;
+    private String style;
 
     public BookPageView(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
     public BookPageView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public BookPageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context);
     }
 
-    private void init(){
+    private void init(Context context){
 //        defaultWidth = 600;
 //        defaultHeight = 1000;
 //
@@ -100,6 +104,40 @@ public class BookPageView extends View{
         mBPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP)); //在最底层
         mBPath = new Path();
 
+        scroller = new Scroller(context,new LinearInterpolator());  //以常量速率滑动即可
+
+    }
+
+    @Override
+    public void computeScroll() {
+        if (scroller.computeScrollOffset()){
+            float x = scroller.getCurrX();
+            float y = scroller.getCurrY();
+            if (style.equals(STYLE_TOP_RIGHT)){
+                setTouchPoint(x,y,STYLE_TOP_RIGHT);
+            }else{
+                setTouchPoint(x,y,STYLE_LOWER_RIGHT);
+            }
+            if (scroller.getFinalX() == x && scroller.getFinalY() == y){
+                setDefaultPath();
+            }
+
+        }
+
+    }
+    //取消翻页动画，计算滑动位置与时间
+    public void startCancelAnim(){
+        int dx,dy;
+        //让a滑动到f点所在位置，留出1像素是为了防止当a和f重叠时出现View闪烁的情况
+        if (style.equals(STYLE_TOP_RIGHT)){
+            dx = (int) (viewWidth - 1 -a.x);
+            dy = (int) (1- a.y);
+        }else{
+            dx = (int) (viewWidth - 1 -a.x);
+            dy = (int) (viewHeight - 1 - a.y);
+        }
+
+        scroller.startScroll((int)a.x,(int)a.y,dx,dy,400);    //dx.dy为滑动的距离
     }
 
     @Override
@@ -306,6 +344,7 @@ public class BookPageView extends View{
         MyPoint touchPoint = new MyPoint(x,y);
         a.x = x;
         a.y = y;
+        this.style = style;
         switch (style){
             case STYLE_TOP_RIGHT:
                 f.x = viewWidth;
