@@ -52,7 +52,7 @@ public class CustomSqliteOpenHelper extends SQLiteOpenHelper {
 ////            values = new ContentValues();
 ////            values.put("book_name", "霍乱时期的爱情");
 ////            values.put("author", "未知");
-////            sqLiteDatabase.insert("bookStore", null, values);
+//            sqLiteDatabase.insert("bookStore", null, values);
 //        }
 //        sqLiteDatabase.endTransaction();
         //--------------------------------------------第三种写法------------------------------------- best way
